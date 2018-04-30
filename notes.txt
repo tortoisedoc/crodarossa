@@ -1,0 +1,126 @@
+THINGS YOU WILL NEED:
+*USB kb
+*USB stick -> msdos part table
+* 1 512 FAT32 partition
+* 1 100% ext4 partition
+
+*If on Windows, a recent Linux distro (I used Ubuntu)
+-> for the UEFI tools https://help.ubuntu.com/community/UEFIBooting
+
+*Get yocto toolchain:
+http://downloads.yoctoproject.org/releases/yocto/yocto-1.8/toolchain/x86_64/poky-glibc-x86_64-core-image-sato-core2-64-toolchain-1.8.sh
+
+*Get real config and replace the .config in the root tree :
+
+https://gist.github.com/NotKit/e00046eafa3f18eb94b945fd91e404a5
+
+To compile, execute this before make'ing:
+
+ export CROSS_COMPILE=/opt/poky/1.8/sysroots/x86_64-pokysdk-linux/usr/bin/x86_64-poky-linux/x86_64-poky-linux-
+
+Istruziuns por fa pie ia tal UEFI BIOS:
+
+http://manguiro.blogspot.fi/2015/03/guide-teclast-x89-installation-guide.html
+
+Teclast x89 HW:
+PMIC 		Xpowers or TI
+Audio 		Realtek ALC5642
+MIPI PANEL	Innolux 8x12
+Wifi		Realtek RGN RTL8723BS
+Bt		Realtek RGN RTL8723BS
+GPS 		disabled?
+Rear Camera	GO GNDF130928-C
+Front Camera	GO GNDF130927-B
+Charger		X-Powers integrated
+Fuel gauge	X-Powers integrated
+ALS sensor	Solteam JSA-112
+Gyro sensor	Bosch BMG160
+Accel/compass	AK09911C&KXCJK-1013
+SAR sensor	disabled
+
+
+Prepare UEFI32 bit boot image:
+https://wiki.archlinux.org/index.php/Asus_x205ta#Creating_a_bootable_USB
+
+
+WIFI DEVID (da android) : 0x024c:0xB723
+
+MODULES (da android):
+atomisp_css2400b0_v21
+lm3642
+lm3554
+gc_class
+ov 35345
+ov2722
+imx1x5
+atmel_mxt_ts
+vxd392
+videobuf_vmalloc
+videobuf_core
+bcm_bt_lpm
+hdmi_audio
+8723bs
+
+EXTRA
+=========
+
+Struttura de Mesa:
+http://3.bp.blogspot.com/-yp99PzEORDI/T1no3lrZlCI/AAAAAAAAABI/RV7ODuT6qlw/s1600/EGL-Mesa-Wayland-arch.png
+
+Better info on how to get location of crash in kernel:
+https://www.olimex.com/forum/index.php?topic=3506.0
+https://forum.porteus.org/viewtopic.php?t=5364&p=40598
+Kernel panic howto :  http://www.dedoimedo.com/computers/crash-analyze.html
+Notes sön 8723bs sonza mmc1 : https://github.com/hadess/rtl8723bs/issues/20
+Por fa kms pluing da qt : http://pastebin.com/mdAbvfzr
+1) Compileia kernel -> con config
+2) dejciaria libdrm da git.merproject.org (locusf, mes ester versciun 2.4.70 almanco)
+3) compileia com sb2 (nota dipendenze!)
+ -> libgbm
+ -> mesa
+    por fa le build de mesa : https://pkg-xorg.alioth.debian.org/howto/build-mesa.html
+ -> installa mesa-dri-intel-driver
+ -> installa mesa-libwayland-egl
+
+
+
+[23:42] <mal-> tortoisedoc_: http://pastebin.com/xmkiR5B5 (ciara ks.cfg)
+
+[23:42] <tortoisedoc_> mal- : this uses egl, right? not kms?
+[23:43] <mal-> tortoisedoc_: replace @DEVICE@ with your device codename and then run 
+sudo mic create fs --arch $PORT_ARCH --tokenmap=DEVICE:$DEVICE,ARCH:$PORT_ARCH,RELEASE:$RELEASE,EXTRA_NAME:$EXTRA_NAME --record-pkgs=name,url --outdir=sfe-$DEVICE-$RELEASE$EXTRA_NAME --pack-to=sfe-$DEVICE-$RELEASE$EXTRA_NAME.tar.bz2 filename.ks
+
+-- meter sö repository locale
+* copia i rpm che t'os te na cartella a parte (p.ej. install_rpm)
+* installeia createrepo : zypper install createrepo
+* fej ji createrepo install_rpm
+* met le repo tal .ks desco file url (ej : ///home/mersdk/install_rpm)
+* por fa le refresh rm -R -f install_rpm/repodata y createrepo install_rpm
+* met i pacchetti tal .ks
+
+
+En ater kernel:
+https://github.com/bq/edison-3-mini/
+
+
+MER setup:
+Va do ala HADK 1.9.9
+- con zypper, enstalleia compilatore por x86
+- por x86, l ennom dal compilatore ne é nia -gnueabi*, mo -gnu*
+- en iade che le target é fat, barata SBOX_TARGET_ROOT dal 
+     .scratchbox/<target>/sb2.conf
+  en sciö : SBOX_TARGET_ROOT=/
+- Tal MER SDK:
+  (da defora) met to utente tla gruppe sudo (da /etc/group)
+  installeia meego-rpm-config
+
+
+KERNEL PATCHES:
+===============
+mtp https://github.com/mlehtima/android_kernel_fairphone_fp2/commit/6754a22aa93a12b1ac33ce2bccc98e6314c0fd5a
+
+
+EFI Shell:
+map -r to map out file systems
+ -> fs0 : android
+ -> fs1 : win

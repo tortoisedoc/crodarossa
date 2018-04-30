@@ -1,0 +1,8 @@
+patch mb2 for this fucker : https://bugs.merproject.org/show_bug.cgi?id=849
+(its the build_tgt variable in /usr/bin/mb2)
+Clone
+
+https://git.merproject.org/tortoisedoc/libdrm.git
+ssh://git@git.merproject.org:2222/tortoisedoc/mesa.git
+
+
